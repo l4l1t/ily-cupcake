@@ -1,0 +1,35 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Transition</title><link rel="stylesheet" href="style.css"/><link rel="stylesheet" href="animations.css"/>
+<style>
+body{margin:0;background:#fff5f7 url('assets/nano/bg-night.png') repeat;background-size:64px 64px;overflow:hidden;}
+#scene{position:fixed;inset:0;z-index:1;}#overlay{position:fixed;inset:0;z-index:10;display:grid;place-items:center;text-align:center;pointer-events:none;}
+#text{font-size:28px;opacity:0;}#text2{font-size:28px;opacity:0;}#go{margin-top:20px;display:none;pointer-events:auto;box-shadow:2px 2px 0 #2b0a0a;}
+#white{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:20;transition:opacity 1.2s;}
+</style></head>
+<body class="screen-base"><div id="scene"></div><div id="floating-sprites"></div><div id="overlay"><div><div id="text">Everything you mean to me...</div><div id="text2">and everything we're about to become 🩷</div><button id="go" class="pixel-button">I'm ready 🕯️</button></div></div><div id="white"></div><div class="scanline-overlay"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script type="module" src="sounds.js"></script><script src="main.js"></script>
+<script>
+const scene=new THREE.Scene();const cam=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,1000);cam.position.set(0,5,25);
+const r=new THREE.WebGLRenderer({alpha:true,antialias:true});r.setSize(innerWidth,innerHeight);document.getElementById('scene').appendChild(r.domElement);
+scene.add(new THREE.AmbientLight(0xffffff,.9));const loader=new THREE.GLTFLoader();let mixer1,mixer2,charA,charB;
+loader.load('assets/blender/campfire.glb',(g)=>{g.scene.position.set(0,-5,0);scene.add(g.scene);if(g.animations.length){mixer1=new THREE.AnimationMixer(g.scene);g.animations.forEach(c=>mixer1.clipAction(c).play());}});
+loader.load('assets/blender/characters.glb',(g)=>{
+  charA=g.scene.clone();charB=g.scene.clone();charA.position.x=-15;charB.position.x=15;scene.add(charA,charB);
+  mixer2=new THREE.AnimationMixer(g.scene);
+  const walk=g.animations.find(a=>a.name.toLowerCase().includes('walk'));const hold=g.animations.find(a=>a.name.toLowerCase().includes('holdhands'));
+  if(walk){mixer2.clipAction(walk,charA).play();mixer2.clipAction(walk,charB).play();}
+  gsap.to([charA.position,charB.position],{duration:4,x:0,ease:'power1.inOut',onComplete:()=>{
+    if(walk){mixer2.stopAllAction();}
+    if(hold){const a1=mixer2.clipAction(hold,charA);const a2=mixer2.clipAction(hold,charB);a1.setLoop(THREE.LoopOnce);a2.setLoop(THREE.LoopOnce);a1.clampWhenFinished=true;a2.clampWhenFinished=true;a1.play();a2.play();}
+    SoundManager.fanfare();
+    gsap.to('#text',{opacity:1,duration:.6,onComplete:()=>setTimeout(()=>gsap.to('#text2',{opacity:1,duration:.6,onComplete:()=>setTimeout(()=>document.getElementById('go').style.display='inline-block',2000)}),1000)});
+  }});
+});
+SoundManager.crackle.start();
+const clock=new THREE.Clock();(function anim(){requestAnimationFrame(anim);const dt=clock.getDelta();mixer1&&mixer1.update(dt);mixer2&&mixer2.update(dt);r.render(scene,cam);})();
+document.getElementById('go').onclick=async()=>{await SoundManager.pageTurn();SoundManager.crackle.stop();document.getElementById('white').style.opacity='1';setTimeout(()=>location.href='letter.html',1200)};
+initFloatingSprites('floating-sprites','assets/nano/sprites-float.png',1800);
+</script></body></html>

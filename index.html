@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Pixel Love</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="animations.css" />
+  <style>
+    #heart-tunnel, #three-scene { position: fixed; inset: 0; }
+    #heart-tunnel { z-index: 0; overflow: hidden; }
+    .tunnel-heart { position: absolute; left: 50%; top: 50%; animation: zoomTunnel 10s linear infinite; }
+    #three-scene { z-index: 2; }
+    #ui { position: fixed; inset: 0; z-index: 4; display: grid; place-items: center; pointer-events: none; }
+    #instruction { background: #fff; padding: 10px 14px; }
+    #note { display:none; position: fixed; z-index:6; left:50%; top:45%; transform:translate(-50%,-50%); width:min(90vw,500px); }
+    #wax-seal { position: fixed; width: 46px; z-index: 7; left: 50%; top: 48%; transform: translate(-50%, -50%); cursor: pointer; }
+    #egg-popup { display:none; position:fixed; z-index:10; bottom:20px; left:50%; transform:translateX(-50%); background:#fff; padding:8px 12px; }
+  </style>
+</head>
+<body class="screen-base">
+  <div id="heart-tunnel"></div>
+  <div id="three-scene"></div>
+  <div id="floating-sprites"></div>
+  <div id="ui"><div id="instruction" class="card pixel-title">Click the envelope 💌</div></div>
+  <img id="wax-seal" src="assets/pinterest/wax-seal.png" alt="wax seal" />
+  <div id="note" class="card pixel-panel">
+    <p id="note-main"></p>
+    <div id="boot-lines"></div>
+    <div class="progress-wrap"><div id="boot-progress" class="progress-bar"></div></div>
+  </div>
+  <div id="egg-popup" class="pixel-panel">you weren't supposed to find this 🥀</div>
+  <div class="scanline-overlay"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script type="module" src="sounds.js"></script>
+  <script src="config.js"></script>
+  <script src="main.js"></script>
+  <script>
+    const heartColors = ['#e63950', '#ff6b9d', '#ffc0e0', '#ffffff'];
+    const tunnel = document.getElementById('heart-tunnel');
+    const heartSVG = (c) => `<svg viewBox="0 0 15 13" width="90" height="80" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg"><path fill="${c}" d="M2 1h3v2h2V1h3v2h2v3h-1v1h-1v1h-1v1H8v1H7v-1H6V8H5V7H4V6H3V3H2z"/></svg>`;
+    function spawnHeart(delay = 0) {
+      const h = document.createElement('div');
+      h.className = 'tunnel-heart';
+      h.innerHTML = heartSVG(heartColors[Math.floor(Math.random() * heartColors.length)]);
+      h.style.animationDelay = `${delay}s`;
+      tunnel.appendChild(h);
+      setTimeout(() => h.remove(), 12000);
+    }
+    for (let i = 0; i < 60; i++) spawnHeart(-i * 0.16);
+    setInterval(() => spawnHeart(0), 300);
+
+    const scene = new THREE.Scene();
+    const cam = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 1000);
+    cam.position.set(0, 0, 35);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(innerWidth, innerHeight);
+    document.getElementById('three-scene').appendChild(renderer.domElement);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.95));
+
+    const envGroup = new THREE.Group();
+    const flapGroup = new THREE.Group();
+    const boxMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const lineMat = new THREE.LineBasicMaterial({ color: 0x2b0a0a });
+
+    function voxel(w,h,d,x=0,y=0,z=0,c=0xffffff){
+      const geo = new THREE.BoxGeometry(w,h,d);
+      const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({color:c}));
+      mesh.position.set(x,y,z);
+      const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo), lineMat);
+      mesh.add(edges);
+      return mesh;
+    }
+
+    envGroup.add(voxel(12,8,2));
+    flapGroup.add(voxel(12,4,2,0,2,0));
+    flapGroup.position.y = 4;
+    envGroup.add(flapGroup);
+    envGroup.add(voxel(1,1,1,0,2,1.2,0xe63950));
+    envGroup.add(voxel(1,1,1,-1,1,1.2,0xe63950));
+    envGroup.add(voxel(1,1,1,1,1,1.2,0xe63950));
+    scene.add(envGroup);
+
+    const ray = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let opened = false;
+
+    function animate(t=0){
+      if(!opened){
+        envGroup.rotation.y = Math.sin(t*0.001)*0.25;
+        envGroup.position.y = Math.sin(t*0.0016)*0.8;
+      }
+      renderer.render(scene,cam);
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+
+    window.addEventListener('click', (e) => {
+      mouse.x = (e.clientX / innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / innerHeight) * 2 + 1;
+      ray.setFromCamera(mouse, cam);
+      if (ray.intersectObject(envGroup, true).length && !opened) openEnvelope();
+    });
+
+    function typeWithSound(el, text, done) {
+      let i = 0;
+      const iv = setInterval(async () => {
+        el.textContent += text[i++] || '';
+        if (window.SoundManager && text[i - 1]) SoundManager.bootBlip();
+        if (i >= text.length) {
+          clearInterval(iv);
+          done && done();
+        }
+      }, 35);
+    }
+
+    function openEnvelope() {
+      opened = true;
+      document.getElementById('instruction').style.display = 'none';
+      gsap.timeline()
+        .to(envGroup.position, { x: 0, y: 0, duration: 0.5 })
+        .to(flapGroup.rotation, { x: Math.PI * 0.8, duration: 0.8 }, '-=0.1')
+        .call(() => {
+          const note = document.getElementById('note');
+          note.style.display = 'block';
+          gsap.fromTo(note, { scale: 0, y: 60 }, { scale: 1, y: 0, duration: 0.6 });
+          gsap.fromTo(note, { scaleY: 0.1 }, { scaleY: 1, duration: 0.6 });
+          typewriterReveal(document.getElementById('note-main'), '💌 You said yes... and now I get to show you everything 🩷', 28, () => {
+            const lines = document.getElementById('boot-lines');
+            typeWithSound(lines.appendChild(document.createElement('p')), 'Loading our story together...', () => {
+              typeWithSound(lines.appendChild(document.createElement('p')), 'All systems in love mode 💌', () => {
+                gsap.to('#boot-progress', { width: '100%', duration: 3, onComplete: () => pixelWipeTo('boot.html') });
+              });
+            });
+          });
+        });
+    }
+
+    const egg = document.getElementById('egg-popup');
+    document.getElementById('wax-seal').addEventListener('click', () => {
+      trackEasterEgg('wax', 3, () => {
+        SoundManager.easterEggChime();
+        egg.style.display = 'block';
+        setTimeout(() => egg.style.display = 'none', 2000);
+      });
+    });
+
+    initFloatingSprites('floating-sprites', 'assets/nano/sprites-float.png', 1500);
+  </script>
+</body>
+</html>
