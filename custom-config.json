@@ -1,0 +1,21 @@
+{
+  "herName": "FILL_IN",
+  "nicknames": ["FILL_IN", "FILL_IN"],
+  "startDate": "2025-06-03T23:24:00",
+  "customPromises": ["FILL_IN"],
+  "memories": [
+    { "type": "photo", "url": "FILL_IN", "caption": "FILL_IN", "date": "FILL_IN" },
+    { "type": "text", "message": "FILL_IN", "date": "FILL_IN" },
+    { "type": "quote", "quote": "FILL_IN", "attribution": "FILL_IN" }
+  ],
+  "spotifyPlaylistId": "6h48LqwuHEgrCjrZmRCCGf",
+  "futurePlans": ["FILL_IN"],
+  "songDedications": [
+    { "song": "FILL_IN", "why": "FILL_IN" }
+  ],
+  "easterEggMessages": ["FILL_IN"],
+  "hiddenTextPairs": [
+    { "visible": "FILL_IN", "revealed": "FILL_IN" }
+  ],
+  "stickers": ["FILL_IN"]
+}

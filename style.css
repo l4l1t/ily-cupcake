@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --page-bg: #fff5f7;
+  --card: #ffffff;
+  --soft-pink: #ffb3c1;
+  --mid-pink: #f7a8c4;
+  --primary-red: #e63950;
+  --deep-red: #c62828;
+  --pixel-black: #2b0a0a;
+  --leaf-green: #a5d6a7;
+  --seed-yellow: #ffe082;
+}
+
+body {
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  line-height: 1.7;
+  color: var(--pixel-black);
+  background: var(--page-bg);
+}
+
+h1,
+h2,
+h3,
+button,
+.pixel-title {
+  font-family: 'Press Start 2P', cursive;
+  line-height: 1.4;
+}
+
+h1 { font-size: 16px; }
+h2 { font-size: 12px; }
+h3 { font-size: 10px; }
+
+.pixel-panel {
+  border: 3px solid var(--pixel-black);
+  box-shadow: 3px 3px 0 var(--pixel-black);
+  border-radius: 0;
+}
+
+.pixel-button {
+  font-family: 'Press Start 2P', cursive;
+  border: 3px solid var(--pixel-black);
+  box-shadow: 3px 3px 0 var(--pixel-black);
+  border-radius: 0;
+  cursor: pointer;
+  padding: 12px 20px;
+  background: var(--card);
+  color: var(--pixel-black);
+}
+
+.pixel-button:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+.scanline-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+}
+
+.screen-base {
+  min-height: 100vh;
+  background-color: var(--page-bg);
+  background-size: 64px 64px;
+  image-rendering: pixelated;
+  font-family: 'VT323', monospace;
+  color: var(--pixel-black);
+}
+
+.card {
+  background: var(--card);
+  border: 3px solid var(--pixel-black);
+  box-shadow: 3px 3px 0 var(--pixel-black);
+  padding: 24px;
+  border-radius: 0;
+}
+
+.highlight {
+  background: var(--soft-pink);
+  padding: 0 4px;
+}
+
+.pixel-input {
+  border: 3px solid var(--pixel-black);
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  padding: 8px;
+}
+
+.progress-wrap {
+  width: 100%;
+  border: 3px solid var(--pixel-black);
+  height: 24px;
+  margin-top: 16px;
+  background: #fff;
+}
+
+.progress-bar {
+  width: 0;
+  height: 100%;
+  background: var(--primary-red);
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 18px;
+  }
+
+  h1 { font-size: 14px; }
+  h2 { font-size: 10px; }
+  h3 { font-size: 8px; }
+
+  .card {
+    padding: 14px;
+  }
+
+  .pixel-button {
+    font-size: 10px;
+    padding: 10px 14px;
+  }
+
+  .pixel-input {
+    font-size: 18px;
+  }
+}

@@ -1,0 +1,86 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Letter</title><link rel="stylesheet" href="style.css"/><link rel="stylesheet" href="animations.css"/>
+<style>
+body{background:#fff5f7 url('assets/nano/bg-parchment.png') repeat;background-size:64px 64px;}
+#bg3d{position:fixed;inset:0;z-index:0;} .letter-content{position:relative;z-index:2;max-width:680px;margin:auto;padding:20px;}
+.section{margin:28px 0;} .paragraph{min-height:1em; white-space:pre-wrap;} #timer{font-size:10px;display:inline-block;padding:12px;margin-bottom:12px;cursor:pointer;}
+.popup{display:none;position:fixed;left:50%;top:16px;transform:translateX(-50%);z-index:30;background:#fff;padding:8px;}
+.sticker{position:absolute; width:80px; opacity:.9;} .hidden-message{font-size:8px;font-family:'Press Start 2P';color:#e63950;margin-top:6px;}
+#final{margin:40px 0;text-align:center;} #noBtn{opacity:.15;font-size:10px;font-family:'VT323';}
+</style></head>
+<body class="screen-base">
+<div id="bg3d"></div><div id="floating-sprites"></div><div class="scanline-overlay"></div><div class="popup pixel-panel" id="timerPopup">📅 June 3</div>
+<main class="letter-content">
+  <div id="timer" class="pixel-panel pixel-title">00:00:00</div>
+
+  <section class="section" id="sec1"><h2>HERE'S ALL I WANNA SAY.. 💌</h2>
+    <p class="paragraph reveal" data-text="There is something I gotta tell you for a very long time – I knew you since June 3 11:24 PM and I honestly have no idea on how you came into my life ( yes yes I remember every single detail about you because am madly in love with you for a very long time) I think I really like you, not just as a best friend but more than that tbh."></p>
+    <p class="paragraph reveal" data-text="When I first texted you I lowkey hated you and thought you were the last person that I would fall in love with but idk something ... really something changed – we started giving out nicknames – and I loved every moment of it tbh I never expected that me at this time would be writing a love letter rn especially when I promised myself not to fall in love with anyone in my whole damn life – something inside me tells me louder that you are the one and you are the only one for me in this lifetime ––"></p>
+    <p class="paragraph reveal" data-text="Every single day when I text you I feel good – my stress ? GONE. and mental health was improved to an amazing extent Istg I never felt like this in my whole life time never when I spoke to others online or offline – not even a single bit."></p>
+    <p class="paragraph reveal" data-text="Whenever you call me by nicknames like bbg and bitch I only got more happier – I know bbg is a girl nickname but when you called me that it made me feel really special , it's not just a nickname It is something which is personally so special to me ngl 😔 – Your goofy jokes, your amazing personality that no one can imitate is what actually made me fall in love with you and you better stay like this -"></p>
+    <p class="paragraph reveal" data-text="From the moment I get out of my bed you are the only thing in my mind tbh I just prayed everyday that you should never fall in love with anyone else and leave me like nothing happened I would be thinking what would be she doing at the moment and where would she be – Is she well or not, Is she sad, Is she happy, Does she like me back?? All these questions have been running on my mind – EVERYDAY and the times when you aren't online?? I missed you so much cupcake and the times when we were busy on our exams I always wished we spoke more, more and moreeee 🥀😔 During our exam prep I felt like I lost smth because speaking with you lowkey became my habit and more of an addiction tbh – I still remember you asking me to find a gf for myself but things took a turn and the one you asked me to find is actually you lmao - did you really think someone else is out here in the world who can be a better girl than you for me? 😭 –"></p>
+    <p class="paragraph reveal" data-text="You made me feel valued and cared - you're the only person who made me feel special , You were with me when I thought I was good for nothing and made me fall in love with you again, again and again."></p>
+    <p class="paragraph reveal" data-text="I promise – promise that I'll love you forever , send you these long ass paragraphs regularlyyy , never change myself for the sake of anyone, and make sure that you'll never be replaced by anyone. NEVER. – you'll never be unloved by me NEVER NO MATTER WHAT – I promise you that I'll make you the HAPPIEST GIRL EVERRRR ."></p>
+    <p class="paragraph reveal" data-text="Tears are the last thing I'd ever want to see from your eyes. No matter what , it doesn't matter how many people trash talk about you or how many people try to pull you down- I would always stay with you cupcake 💌 share everything with me and I'll comfort you no matter what When you said You have me while texting me I hope you mean that ☹️ I promise you one more thing – You'll forever be my favourite notification and no matter how many people text me – your dms will be the first one to get opened by me and I promise you that I'll never leave you it's always you and me against the whole damn world do you get it?"></p>
+    <p class="paragraph reveal" data-text="You're staying with me no matter what... You're mineee FOREVER and once you accept me you're literally stuck with me FOREVER and am never leaving you 💌"></p>
+  </section>
+
+  <section class="section" id="sec2"><h2>Why I picked you 🩷</h2><ul id="picked"></ul></section>
+  <section class="section" id="sec3"><h2>What I want for us ✨</h2><ul id="future"></ul></section>
+  <section class="section" id="sec4"><h2>Every promise I made you 💍</h2><ul id="recap"></ul></section>
+  <section class="section" id="sec5"><h2>Songs that remind me of you 🎵</h2><ul id="songs"></ul>
+    <div class="pixel-panel" style="padding:12px;"><iframe id="spotify" width="100%" height="152" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe></div>
+  </section>
+
+  <div data-hidden class="section"><span>hover me for hidden message</span><div class="hidden-message">secret</div></div>
+
+  <div id="final"><canvas id="heartCanvas" width="300" height="300"></canvas>
+    <p style="font-size:32px;">TELL ME — TELL ME ONE LAST TIME — Can I be your boyfriend forever??? 🥀 &lt;3</p>
+    <button id="yesBtn" class="pixel-button" style="background:#a5d6a7;">Yes, forever 💌</button>
+    <button id="noBtn" class="pixel-button">No</button>
+    <div id="forever" style="display:none;position:fixed;inset:0;background:rgba(255,255,255,.95);z-index:40;place-items:center;font-size:20px;" class="pixel-title">💌 Us. Forever.</div>
+  </div>
+
+  <img class="sticker" src="assets/pinterest/bear.png" style="top:120px;left:-30px"/>
+  <img class="sticker" src="assets/pinterest/cat.png" style="top:240px;right:-30px"/>
+  <img class="sticker" src="assets/pinterest/bow.png" style="top:420px;left:-20px"/>
+  <img class="sticker" src="assets/pinterest/stars.png" style="top:540px;right:-20px"/>
+  <img class="sticker" src="assets/pinterest/strawberry.png" style="top:760px;left:-25px"/>
+  <img class="sticker" src="assets/pinterest/heart-envelope.png" style="top:900px;right:-25px"/>
+  <img class="sticker" src="assets/pinterest/pixel-border.png" style="top:1080px;left:-20px"/>
+  <img class="sticker" src="assets/pinterest/star2.png" style="top:1260px;right:-15px"/>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script type="module" src="sounds.js"></script><script src="config.js"></script><script src="main.js"></script>
+<script>
+const scene=new THREE.Scene();const cam=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,1000);cam.position.set(20,10,20);
+const r=new THREE.WebGLRenderer({alpha:true,antialias:true});r.setSize(innerWidth,innerHeight);r.domElement.style.opacity='0.35';document.getElementById('bg3d').appendChild(r.domElement);
+scene.add(new THREE.AmbientLight(0xffe0c0,1.2));const loader=new THREE.GLTFLoader();loader.load('assets/blender/diorama.glb',g=>scene.add(g.scene));let t=0;(function a(){requestAnimationFrame(a);t+=.0005;cam.position.x=Math.cos(t)*20;cam.position.z=Math.sin(t)*20;cam.lookAt(0,0,0);r.render(scene,cam);})();
+
+const startDate = new Date('2025-06-03T23:24:00');
+function upd(){const d=((Date.now()-startDate)/1000)|0;const days=(d/86400)|0;const hrs=((d%86400)/3600)|0;const sec=d%60;document.getElementById('timer').innerHTML=`${days}<span class='anim-blink-cursor'>:</span>${String(hrs).padStart(2,'0')}<span class='anim-blink-cursor'>:</span>${String(sec).padStart(2,'0')}`;}
+setInterval(upd,1000);upd();
+document.getElementById('timer').onclick=()=>{document.getElementById('timerPopup').style.display='block';SoundManager.easterEggChime();setTimeout(()=>timerPopup.style.display='none',2000)};
+
+const io=new IntersectionObserver((entries)=>entries.forEach(en=>{if(en.isIntersecting && !en.target.dataset.done){en.target.dataset.done=1;SoundManager.pageTurn();typewriterReveal(en.target,en.target.dataset.text,15);}}),{threshold:.2});
+document.querySelectorAll('.reveal').forEach(p=>io.observe(p));
+
+function fill(){
+ const future=(window.getFuturePlans?getFuturePlans():[]);const picked=document.getElementById('picked');const futureEl=document.getElementById('future');
+ (future.length?future:['FILL_IN']).forEach(v=>{const li=document.createElement('li');li.textContent=v;picked.appendChild(li);futureEl.appendChild(li.cloneNode(true));});
+ const base=["I'll never cheat on you 💍","I promise to make myself better for you ✨","I'll comfort you whenever you feel sad 🧸","I'll correct myself if I'm wrong 💌","I'll never be toxic to you 🌸","I'll never change for anybody 🌟","I'll take care of you 🫶🏻","I'll text you good morning every day ☀️","I'll be your safe space when the world gets too loud 🤫","I'll laugh at your jokes even if they're terrible 😂","I'll support your dreams no matter what 🚀","I'll hold your hand when you're scared 🤝","I'll be your biggest cheerleader 📣","I'll fight for us when things get hard ⚔️","I'll be honest even when it's hard 🗣️","I'll choose you, always 💙","I'll remember the small things that matter 📝","I'll make you laugh until your stomach hurts 😆","I'll never let you feel alone 🌙","I'll be proud of you every single day 🌟"];
+ const custom=JSON.parse(sessionStorage.getItem('customPromises')||'[]');[...base,...custom].forEach(v=>{const li=document.createElement('li');li.textContent=v;recap.appendChild(li);});
+ (window.getSongDedications?getSongDedications():[{song:'FILL_IN',why:'FILL_IN'}]).forEach(s=>{const li=document.createElement('li');li.textContent=`${s.song} — ${s.why}`;songs.appendChild(li);});
+ const pid=(window.CONFIG&&CONFIG.spotifyPlaylistId)||'6h48LqwuHEgrCjrZmRCCGf';document.getElementById('spotify').src=`https://open.spotify.com/embed/playlist/${pid}`;
+}
+window.addEventListener('DOMContentLoaded',fill);
+
+document.body.addEventListener('click',(e)=>{if(e.target.textContent.includes('June 3')){createConfetti(60);} if(e.target.textContent.toLowerCase().includes('cupcake')){for(let i=0;i<30;i++){const img=document.createElement('img');img.src='assets/pinterest/cupcake-sticker.png';img.style.position='fixed';img.style.left='-80px';img.style.top=Math.random()*innerHeight+'px';img.style.width='30px';img.style.zIndex='50';document.body.appendChild(img);gsap.to(img,{x:innerWidth+160,duration:2,onComplete:()=>img.remove()});}}});
+
+const hs=new THREE.Scene();const hc=new THREE.PerspectiveCamera(45,1,.1,100);hc.position.z=5;const hr=new THREE.WebGLRenderer({canvas:document.getElementById('heartCanvas'),alpha:true});hr.setSize(300,300);let hm;loader.load('assets/blender/heart.glb',g=>{hm=g.scene;hs.add(hm);});(function hb(){requestAnimationFrame(hb);if(hm)hm.rotation.y+=.02;hr.render(hs,hc);})();
+SoundManager.heartbeat.start();
+yesBtn.onclick=async()=>{SoundManager.heartbeat.stop();await SoundManager.finalFanfare();createConfetti(80);setTimeout(()=>{forever.style.display='grid';forever.classList.add('anim-fade-in-up');},2000)};
+noBtn.onmouseenter=()=>{noBtn.style.opacity='0';setTimeout(()=>noBtn.remove(),200)};
+</script></body></html>
