@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Booting Love OS</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="animations.css" />
+  <style>
+    body{display:grid;place-items:center;background:#fff5f7;font-family:'Press Start 2P',cursive;}
+    #terminal{width:min(92vw,500px);min-height:330px;}
+    #lines p{font-size:12px;line-height:1.8;}
+    #cursor{display:inline-block;width:12px;height:18px;background:#2b0a0a;vertical-align:bottom;}
+  </style>
+</head>
+<body class="screen-base">
+  <div id="terminal" class="card pixel-panel">
+    <div id="lines"></div><span id="cursor" class="anim-blink-cursor"></span>
+    <div class="progress-wrap" style="margin-top:24px;"><div id="progress" class="progress-bar"></div></div>
+  </div>
+  <div class="scanline-overlay"></div>
+  <script type="module" src="sounds.js"></script>
+  <script>
+    const lines = [
+      'LALIT_LOVE_OS v2.0',
+      'Loading our story together...',
+      '[████████░░] 80%',
+      '[██████████] 100%',
+      '📸 Memories loaded...',
+      '🩷 Feelings confirmed...',
+      '💌 All systems in love mode',
+      '> Ready.'
+    ];
+    const wrap = document.getElementById('lines');
+
+    function typeLine(text, target, cb) {
+      let i = 0;
+      const t = setInterval(() => {
+        const ch = text[i++] || '';
+        target.textContent += ch;
+        if (ch) SoundManager.bootBlip();
+        if (i >= text.length) { clearInterval(t); cb && cb(); }
+      }, 36);
+    }
+
+    let idx = 0;
+    function next() {
+      if (idx >= lines.length) {
+        setTimeout(() => {
+          document.getElementById('progress').style.transition = 'width 2s linear';
+          document.getElementById('progress').style.width = '100%';
+          setTimeout(() => window.location.href = 'promises.html', 2050);
+        }, 800);
+        return;
+      }
+      const p = document.createElement('p');
+      wrap.appendChild(p);
+      typeLine(lines[idx], p, () => {
+        const stall = lines[idx].includes('80%') ? 1000 : 400;
+        idx += 1;
+        setTimeout(next, stall);
+      });
+    }
+    next();
+  </script>
+</body>
+</html>
