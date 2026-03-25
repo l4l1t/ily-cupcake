@@ -1,42 +1,125 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Promises</title>
+
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="animations.css" />
+
   <style>
-    body{background:#fff5f7 url('assets/nano/bg-plank.png') repeat;background-size:64px 64px;padding:20px;}
-    .header-bow{display:block;margin:0 auto 10px;max-width:80px;}
-    h1{text-align:center;color:#e63950;margin-bottom:20px;}
-    #list{max-width:900px;margin:0 auto;display:grid;gap:10px;}
-    .promise{display:flex;align-items:center;gap:12px;background:url('assets/nano/bg-plank.png');border:3px solid #2b0a0a;box-shadow:3px 3px 0 #2b0a0a;padding:12px;opacity:0;transform:translateY(20px);}
-    .promise.reveal{opacity:1;transform:none;transition:.4s;}
-    .promise img{width:24px;height:24px;image-rendering:pixelated;}
-    .controls{max-width:900px;margin:20px auto 0;}
-    #accept{opacity:.5} 
+    body {
+      background:#fff5f7 url('assets/nano/bg-plank.png') repeat;
+      background-size:64px 64px;
+      padding:20px;
+    }
+
+    .header-bow {
+      display:block;
+      margin:0 auto 10px;
+      max-width:80px;
+    }
+
+    h1 {
+      text-align:center;
+      color:#e63950;
+      margin-bottom:20px;
+    }
+
+    #list {
+      max-width:900px;
+      margin:0 auto;
+      display:grid;
+      gap:10px;
+    }
+
+    .promise {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      background:url('assets/nano/bg-plank.png');
+      border:3px solid #2b0a0a;
+      box-shadow:3px 3px 0 #2b0a0a;
+      padding:12px;
+      opacity:0;
+      transform:translateY(20px);
+    }
+
+    .promise.reveal {
+      opacity:1;
+      transform:none;
+      transition:.4s;
+    }
+
+    .promise img {
+      width:24px;
+      height:24px;
+      image-rendering:pixelated;
+    }
+
+    .controls {
+      max-width:900px;
+      margin:20px auto 0;
+    }
+
+    #accept {
+      opacity:.5;
+    }
   </style>
 </head>
+
 <body class="screen-base">
+
   <img src="assets/pinterest/ribbon-bow.png" class="header-bow" alt="bow" />
   <h1>MY PROMISES TO YOU</h1>
+
   <div id="list"></div>
+
   <div class="controls card">
     <label>Add your own promise:</label>
+
     <div style="display:flex;gap:10px;flex-wrap:wrap;">
       <input id="custom" class="pixel-input" />
       <button id="add" class="pixel-button">Add ➕</button>
     </div>
-    <button id="accept" class="pixel-button" disabled>I accept all of this 💌</button>
+
+    <button id="accept" class="pixel-button" disabled>
+      I accept all of this 💌
+    </button>
   </div>
+
   <div id="floating-sprites"></div>
   <div class="scanline-overlay"></div>
+
   <script type="module" src="sounds.js"></script>
-  <script src="config.js"></script><script src="main.js"></script>
+  <script src="config.js"></script>
+  <script src="main.js"></script>
+
   <script>
     const basePromises = [
-"I'll never cheat on you 💍","I promise to make myself better for you ✨","I'll comfort you whenever you feel sad 🧸","I'll correct myself if I'm wrong 💌","I'll never be toxic to you 🌸","I'll never change for anybody 🌟","I'll take care of you 🫶🏻","I'll text you good morning every day ☀️","I'll be your safe space when the world gets too loud 🤫","I'll laugh at your jokes even if they're terrible 😂","I'll support your dreams no matter what 🚀","I'll hold your hand when you're scared 🤝","I'll be your biggest cheerleader 📣","I'll fight for us when things get hard ⚔️","I'll be honest even when it's hard 🗣️","I'll choose you, always 💙","I'll remember the small things that matter 📝","I'll make you laugh until your stomach hurts 😆","I'll never let you feel alone 🌙","I'll be proud of you every single day 🌟"
+      "I'll never cheat on you 💍",
+      "I promise to make myself better for you ✨",
+      "I'll comfort you whenever you feel sad 🧸",
+      "I'll correct myself if I'm wrong 💌",
+      "I'll never be toxic to you 🌸",
+      "I'll never change for anybody 🌟",
+      "I'll take care of you 🫶🏻",
+      "I'll text you good morning every day ☀️",
+      "I'll be your safe space when the world gets too loud 🤫",
+      "I'll laugh at your jokes even if they're terrible 😂",
+      "I'll support your dreams no matter what 🚀",
+      "I'll hold your hand when you're scared 🤝",
+      "I'll be your biggest cheerleader 📣",
+      "I'll fight for us when things get hard ⚔️",
+      "I'll be honest even when it's hard 🗣️",
+      "I'll choose you, always 💙",
+      "I'll remember the small things that matter 📝",
+      "I'll make you laugh until your stomach hurts 😆",
+      "I'll never let you feel alone 🌙",
+      "I'll be proud of you every single day 🌟"
     ];
+
     const list = document.getElementById('list');
     const checkState = new Map();
     const toggleCount = new Map();
@@ -45,53 +128,92 @@
       const row = document.createElement('div');
       row.className = 'promise';
       row.dataset.id = `${Date.now()}-${i}`;
+
       const icon = document.createElement('img');
       icon.src = 'assets/nano/sprites-ui.png';
+
       const p = document.createElement('div');
       p.textContent = text;
+
       row.append(icon, p);
+
       row.addEventListener('click', (e) => {
         const id = row.dataset.id;
+
         const next = !checkState.get(id);
         checkState.set(id, next);
+
         icon.style.objectPosition = next ? '-24px 0' : '0 0';
+
         row.classList.add('anim-plank-glow');
         SoundManager.chime(i % 7);
         createHeartBurst(e.clientX, e.clientY, 8);
+
         setTimeout(() => row.classList.remove('anim-plank-glow'), 700);
-        const c = (toggleCount.get(id)||0)+1;
-        toggleCount.set(id,c);
-        if(c===3){
+
+        const c = (toggleCount.get(id) || 0) + 1;
+        toggleCount.set(id, c);
+
+        if (c === 3) {
           const old = p.textContent;
-          p.textContent = 'are you sure?? 🥀'; p.style.color='#c62828';
-          setTimeout(()=>{p.textContent=old;p.style.color='';toggleCount.set(id,0);},2000);
+          p.textContent = 'are you sure?? 🥀';
+          p.style.color = '#c62828';
+
+          setTimeout(() => {
+            p.textContent = old;
+            p.style.color = '';
+            toggleCount.set(id, 0);
+          }, 2000);
         }
+
         validate();
       });
+
       list.appendChild(row);
       return row;
     }
 
-    [...basePromises, ...JSON.parse(sessionStorage.getItem('customPromises')||'[]')].forEach((txt,i)=>renderPromise(txt,i));
+    const saved = JSON.parse(sessionStorage.getItem('customPromises') || '[]');
 
-    const io = new IntersectionObserver((entries)=>entries.forEach(en=>en.target.classList.toggle('reveal', en.isIntersecting)), {threshold:.1});
-    document.querySelectorAll('.promise').forEach(el=>io.observe(el));
+    [...basePromises, ...saved].forEach((txt, i) => renderPromise(txt, i));
+
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((en) =>
+          en.target.classList.toggle('reveal', en.isIntersecting)
+        ),
+      { threshold: 0.1 }
+    );
+
+    document.querySelectorAll('.promise').forEach((el) => io.observe(el));
 
     document.getElementById('add').onclick = () => {
-      const value = document.getElementById('custom').value.trim();
-      if(!value) return;
+      const input = document.getElementById('custom');
+      const value = input.value.trim();
+
+      if (!value) return;
+
       renderPromise(value, list.children.length);
-      const arr = JSON.parse(sessionStorage.getItem('customPromises') || '[]'); arr.push(value);
+
+      const arr = JSON.parse(sessionStorage.getItem('customPromises') || '[]');
+      arr.push(value);
       sessionStorage.setItem('customPromises', JSON.stringify(arr));
-      document.getElementById('custom').value = '';
+
+      input.value = '';
       io.observe(list.lastElementChild);
+
       validate();
     };
 
-    function validate(){
+    function validate() {
       const all = [...list.children];
-      const checked = all.length>0 && all.every(el=>checkState.get(el.dataset.id));
+
+      const checked =
+        all.length > 0 &&
+        all.every((el) => checkState.get(el.dataset.id));
+
       const b = document.getElementById('accept');
+
       b.disabled = !checked;
       b.style.opacity = checked ? '1' : '.5';
       b.classList.toggle('anim-pixel-beat', checked);
@@ -100,8 +222,14 @@
     document.getElementById('accept').onclick = async () => {
       await SoundManager.unlockClick();
       await SoundManager.fanfare();
-      sessionStorage.setItem('checkedPromises', JSON.stringify([...checkState.entries()]));
+
+      sessionStorage.setItem(
+        'checkedPromises',
+        JSON.stringify([...checkState.entries()])
+      );
+
       pixelWipeTo('transition.html');
     };
   </script>
-</body></html>
+</body>
+</html>
