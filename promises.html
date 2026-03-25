@@ -39,11 +39,17 @@
     ];
     const list = document.getElementById('list');
     const toggleCount = new Map();
+    let promiseIdCounter = 0;
+
+    function nextPromiseId() {
+      promiseIdCounter += 1;
+      return `promise-${promiseIdCounter}`;
+    }
 
     function renderPromise(text, i) {
       const row = document.createElement('div');
       row.className = 'promise';
-      row.dataset.id = `${Date.now()}-${i}`;
+      row.dataset.id = nextPromiseId();
       row.dataset.checked = 'false';
       const icon = document.createElement('img');
       icon.src = 'assets/nano/sprites-ui.png';
