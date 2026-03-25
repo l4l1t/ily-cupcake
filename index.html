@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Promises</title>
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="animations.css" />
+
+  <style>
+    body {
+      background:#fff5f7 url('assets/nano/bg-plank.png') repeat;
+      background-size:64px 64px;
+      padding:20px;
+    }
+
+    .header-bow { display:block; margin:0 auto 10px; max-width:80px; }
+    h1 { text-align:center; color:#e63950; margin-bottom:20px; }
+
+    #list { max-width:900px; margin:0 auto; display:grid; gap:10px; }
+
+    .promise {
+      display:flex; align-items:center; gap:12px;
+      background:url('assets/nano/bg-plank.png'); border:3px solid #2b0a0a;
+      box-shadow:3px 3px 0 #2b0a0a; padding:12px; opacity:0; transform:translateY(20px);
+    }
+
+    .promise.reveal { opacity:1; transform:none; transition:.4s; }
+    .promise img { width:24px; height:24px; image-rendering:pixelated; }
+
+    .controls, .letter-wrap, .pinterest-wrap { max-width:900px; margin:20px auto 0; }
+    #accept { opacity:.5; }
+
+    #spotifyModal {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none;
+      align-items: center; justify-content: center; z-index: 1001;
+    }
+
+    #spotifyCard { width:min(92vw, 620px); background:#fff; padding:16px; }
+    #spotifyFrame { width:100%; height:352px; border:0; }
+
+    .pinterest-embed {
+      width:100%; min-height:420px; border:3px solid #2b0a0a; box-shadow:3px 3px 0 #2b0a0a;
+      background:#fff;
+    }
+  </style>
+</head>
+
+<body class="screen-base">
+  <img src="assets/pinterest/ribbon-bow.png" class="header-bow" alt="bow" />
+  <h1>MY PROMISES TO YOU</h1>
+
+  <div id="list"></div>
+
+  <div class="controls card">
+    <label>Add your own promise:</label>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <input id="custom" class="pixel-input" />
+      <button id="add" class="pixel-button">Add ➕</button>
+      <button id="openSpotify" class="pixel-button">Open Spotify 💿</button>
+    </div>
+
+    <button id="accept" class="pixel-button" disabled>
+      I accept all of this 💌
+    </button>
+  </div>
+
+  <section class="letter-wrap card">
+    <h2>HERE'S ALL I WANNA SAY.. 💌</h2>
+    <p>There is something I gotta tell you for a very long time – I knew you since <span class="highlight">June 3 11:24 PM</span> and I honestly have no idea on how you came into my life.</p>
+    <p>Every single day when I text you I feel good – my stress gone and everything feels lighter with you around.</p>
+    <p>TELL ME – TELL ME ONE LAST TIME – Can I be your boyfriend forever??? 🥀 &lt;3</p>
+  </section>
+
+  <section class="pinterest-wrap card">
+    <h2>Pinterest moodboard 🎀</h2>
+    <iframe class="pinterest-embed" src="https://assets.pinterest.com/ext/embed.html?id=664281013793603120" title="Pinterest Embed"></iframe>
+  </section>
+
+  <div id="spotifyModal">
+    <div id="spotifyCard" class="pixel-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <strong class="pixel-title" style="font-size:10px;">Songs that remind me of you 🎵</strong>
+        <button id="closeSpotify" class="pixel-button" style="padding:8px 10px;">Close ✖</button>
+      </div>
+      <iframe id="spotifyFrame" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+    </div>
+  </div>
+
+  <div id="floating-sprites"></div>
+  <div class="scanline-overlay"></div>
+
+  <script type="module" src="sounds.js"></script>
+  <script src="config.js"></script>
+  <script src="main.js"></script>
+
+  <script>
+    const basePromises = [
+      "I'll never cheat on you 💍",
+      "I promise to make myself better for you ✨",
+      "I'll comfort you whenever you feel sad 🧸",
+      "I'll correct myself if I'm wrong 💌",
+      "I'll never be toxic to you 🌸",
+      "I'll never change for anybody 🌟",
+      "I'll take care of you 🫶🏻",
+      "I'll text you good morning every day ☀️",
+      "I'll be your safe space when the world gets too loud 🤫",
+      "I'll laugh at your jokes even if they're terrible 😂",
+      "I'll support your dreams no matter what 🚀",
+      "I'll hold your hand when you're scared 🤝",
+      "I'll be your biggest cheerleader 📣",
+      "I'll fight for us when things get hard ⚔️",
+      "I'll be honest even when it's hard 🗣️",
+      "I'll choose you, always 💙",
+      "I'll remember the small things that matter 📝",
+      "I'll make you laugh until your stomach hurts 😆",
+      "I'll never let you feel alone 🌙",
+      "I'll be proud of you every single day 🌟"
+    ];
+
+    const list = document.getElementById('list');
+    const checkState = new Map();
+    const toggleCount = new Map();
+
+    function renderPromise(text, i) {
+      const row = document.createElement('div');
+      row.className = 'promise';
+      row.dataset.id = `${Date.now()}-${i}-${Math.random().toString(36).slice(2, 7)}`;
+
+      const icon = document.createElement('img');
+      icon.src = 'assets/nano/sprites-ui.png';
+
+      const p = document.createElement('div');
+      p.textContent = text;
+
+      row.append(icon, p);
+
+      row.addEventListener('click', (e) => {
+        const id = row.dataset.id;
+
+        const next = !checkState.get(id);
+        checkState.set(id, next);
+
+        icon.style.objectPosition = next ? '-24px 0' : '0 0';
+
+        row.classList.add('anim-plank-glow');
+        SoundManager.chime(i % 7);
+        createHeartBurst(e.clientX, e.clientY, 8);
+
+        setTimeout(() => row.classList.remove('anim-plank-glow'), 700);
+
+        const c = (toggleCount.get(id) || 0) + 1;
+        toggleCount.set(id, c);
+
+        if (c === 3) {
+          const old = p.textContent;
+          p.textContent = 'are you sure?? 🥀';
+          p.style.color = '#c62828';
+
+          setTimeout(() => {
+            p.textContent = old;
+            p.style.color = '';
+            toggleCount.set(id, 0);
+          }, 2000);
+        }
+
+        validate();
+      });
+
+      list.appendChild(row);
+      return row;
+    }
+
+    const saved = JSON.parse(sessionStorage.getItem('customPromises') || '[]');
+    [...basePromises, ...saved].forEach((txt, i) => renderPromise(txt, i));
+
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((en) => en.target.classList.toggle('reveal', en.isIntersecting)),
+      { threshold: 0.1 }
+    );
+
+    document.querySelectorAll('.promise').forEach((el) => io.observe(el));
+
+    document.getElementById('add').onclick = () => {
+      const input = document.getElementById('custom');
+      const value = input.value.trim();
+      if (!value) return;
+
+      renderPromise(value, list.children.length);
+
+      const arr = JSON.parse(sessionStorage.getItem('customPromises') || '[]');
+      arr.push(value);
+      sessionStorage.setItem('customPromises', JSON.stringify(arr));
+
+      input.value = '';
+      io.observe(list.lastElementChild);
+      validate();
+    };
+
+    function validate() {
+      const all = [...list.children];
+      const checked = all.length > 0 && all.every((el) => checkState.get(el.dataset.id));
+
+      const b = document.getElementById('accept');
+      b.disabled = !checked;
+      b.style.opacity = checked ? '1' : '.5';
+      b.classList.toggle('anim-pixel-beat', checked);
+    }
+
+    document.getElementById('accept').onclick = async () => {
+      await SoundManager.unlockClick();
+      await SoundManager.fanfare();
+
+      sessionStorage.setItem('checkedPromises', JSON.stringify([...checkState.entries()]));
+      pixelWipeTo('transition.html');
+    };
+
+    const spotifyModal = document.getElementById('spotifyModal');
+    const spotifyFrame = document.getElementById('spotifyFrame');
+
+    function getPlaylistId() {
+      return (window.CONFIG && window.CONFIG.spotifyPlaylistId) || '6h48LqwuHEgrCjrZmRCCGf';
+    }
+
+    document.getElementById('openSpotify').onclick = () => {
+      spotifyFrame.src = `https://open.spotify.com/embed/playlist/${getPlaylistId()}`;
+      spotifyModal.style.display = 'flex';
+      SoundManager.chime(4);
+    };
+
+    document.getElementById('closeSpotify').onclick = () => {
+      spotifyModal.style.display = 'none';
+    };
+
+    spotifyModal.addEventListener('click', (e) => {
+      if (e.target === spotifyModal) spotifyModal.style.display = 'none';
+    });
+
+    initFloatingSprites('floating-sprites', 'assets/nano/sprites-float.png', 1600);
+  </script>
+</body>
+</html>
